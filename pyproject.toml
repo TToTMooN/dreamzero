@@ -56,7 +56,7 @@ dependencies = [
     "lark",
     "datasets==3.6.0",
     "pandas",
-    "evdev; sys_platform == 'linux'",
+    # "evdev; sys_platform == 'linux'",  # Removed: requires kernel headers, not needed for training
     "pybullet; sys_platform == 'linux'",
     "gear",
     # Pin the MSC dependency version to prevent potential issues caused by publishing new releases.

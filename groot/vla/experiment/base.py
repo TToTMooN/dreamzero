@@ -811,6 +811,15 @@ class BaseExperiment(ABC):
         loss_log_path = str(Path(training_args.output_dir) / "loss_log.jsonl")
         trainer.add_callback(LossLoggerCallback(output_path=loss_log_path))
 
+        # Video generation callback — logs GT vs reconstructed frames to wandb
+        log_video_every = cfg.get("log_video_every_n_steps", 0)
+        if log_video_every > 0 and cfg.get("report_to", "none") == "wandb":
+            from groot.vla.experiment.video_eval_callback import VideoEvalCallback
+            trainer.add_callback(VideoEvalCallback(
+                log_video_every_n_steps=log_video_every,
+                num_frames_to_log=cfg.get("num_video_frames_to_log", 8),
+            ))
+            mprint(f"Video eval callback enabled: logging every {log_video_every} steps")
 
         # Add profiling callback (local profiling only, no S3 upload)
         # Local: {output_dir}/profiling/rank_{id}/*.pt.trace.json

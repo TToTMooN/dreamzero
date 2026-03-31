@@ -72,6 +72,10 @@ save_total_limit: 8
 report_to: wandb
 seed: 42
 do_eval: false
+
+# Video eval callback: log GT vs predicted frames to wandb every N steps (0=disabled)
+log_video_every_n_steps: 0
+num_video_frames_to_log: 8
 gradient_checkpointing: false
 ddp_find_unused_parameters: false
 ddp_bucket_cap_mb: 100

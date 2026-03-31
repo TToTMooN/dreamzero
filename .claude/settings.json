@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(python *)",
+      "Bash(pip *)",
+      "Bash(conda *)",
+      "Bash(huggingface-cli *)",
+      "Bash(torchrun *)",
+      "Bash(bash scripts/*)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(nvidia-smi*)",
+      "Bash(df *)"
+    ]
+  }
+}

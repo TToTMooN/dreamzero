@@ -1,0 +1,39 @@
+# @package _global_
+# Wan2.1-T2V-1.3B backbone config for DreamZero DROID training
+# Uses CausalWanModel with 1.3B architecture (dim=1536, 12 heads, 30 layers)
+# Same VAE as 14B (z_dim=16, 8x spatial stride), same resolution 320x176
+# First-frame conditioning via CLIP (like 5B), NOT latent concat (T2V has no I2V weights)
+# ~10x fewer DiT params than 14B -> much faster training
+#
+# Override: model/dreamzero/action_head=wan_flow_matching_action_tf_wan21_1_3b
+
+defaults:
+  - wan_flow_matching_action_tf
+
+# With target_video 176x320 -> VAE 8x -> 22x40 -> patch(1,2,2) -> 11x20 = 220 tokens/frame
+frame_seqlen: 220
+
+action_head_cfg:
+  config:
+    target_video_height: 176
+    target_video_width: 320
+    # 1.3B DiT dim
+    input_embedding_dim: 1536
+    diffusion_model_cfg:
+      model_type: "i2v"
+      dim: 1536
+      # T2V weights: in_dim=16, no first-frame latent concat
+      # First frame conditioned via CLIP image encoder (same as Wan2.2 5B approach)
+      in_dim: 16
+      concat_first_frame_latent: false
+      ffn_dim: 8960
+      out_dim: 16
+      freq_dim: 256
+      eps: 1e-6
+      num_heads: 12
+      num_layers: 30
+    # Same VAE as 14B (z_dim=16)
+    vae_cfg:
+      _target_: groot.vla.model.dreamzero.modules.wan_video_vae.WanVideoVAE
+      _convert_: object
+      vae_pretrained_path: ${vae_pretrained_path}

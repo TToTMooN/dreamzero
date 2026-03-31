@@ -160,6 +160,15 @@ def collate(features: List[dict], tokenizer: AutoTokenizer, num_views=3, embodim
             batch['text_attention_mask_negative'] = mask
         else:
             values = [elem[key] for elem in features]
+            # Handle shape mismatches: use majority shape, drop outliers
+            if isinstance(values[0], np.ndarray) and len(values) > 1:
+                shapes = [v.shape for v in values]
+                if len(set(shapes)) > 1:
+                    # Use the most common shape; replicate first matching sample for mismatched ones
+                    from collections import Counter
+                    most_common_shape = Counter(shapes).most_common(1)[0][0]
+                    reference = next(v for v in values if v.shape == most_common_shape)
+                    values = [v if v.shape == most_common_shape else reference for v in values]
             batch[key] = torch.from_numpy(np.stack(values))
     return batch
 
